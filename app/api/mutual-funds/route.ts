@@ -1,14 +1,17 @@
 import { NextResponse } from 'next/server';
 
-const mutualFunds = [
-  { ticker: 'VFIAX', name: 'Vanguard 500 Index Fund Admiral Shares' },
-  { ticker: 'FXAIX', name: 'Fidelity 500 Index Fund' },
-  { ticker: 'SWPPX', name: 'Schwab S&P 500 Index Fund' },
-  { ticker: 'PRGFX', name: 'T. Rowe Price Growth Stock Fund' },
-  { ticker: 'TRBCX', name: 'T. Rowe Price Blue Chip Growth Fund' },
-];
-
 export async function GET() {
-  return NextResponse.json(mutualFunds);
-}
+  try {
+    const response = await fetch('http://localhost:8080/api/mutual-funds');
 
+    if (!response.ok) {
+      throw new Error(`Backend error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('Error fetching mutual funds from backend:', error);
+    return NextResponse.json({ error: 'Failed to fetch mutual funds' }, { status: 500 });
+  }
+}
