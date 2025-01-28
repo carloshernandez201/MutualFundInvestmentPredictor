@@ -12,6 +12,7 @@ import { Loader2 } from 'lucide-react';
 interface MutualFund {
   ticker: string;
   name: string;
+  hotness: number;
 }
 
 export default function MutualFundCalculator() {
@@ -47,28 +48,36 @@ export default function MutualFundCalculator() {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-2xl text-gray-800">Investment Calculator</CardTitle>
-        <CardDescription>Calculate potential returns on your mutual fund investments</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Mutual Fund</label>
-            <Select onValueChange={setSelectedFund}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a mutual fund" />
-              </SelectTrigger>
-              <SelectContent>
-                {mutualFunds.map(fund => (
-                  <SelectItem key={fund.ticker} value={fund.ticker}>
-                    {fund.name} ({fund.ticker})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+<Card>
+  <CardHeader>
+    <CardTitle className="text-2xl text-gray-800">Investment Calculator</CardTitle>
+    <CardDescription>Calculate potential returns on your mutual fund investments</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Mutual Fund</label>
+        <Select onValueChange={setSelectedFund}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a mutual fund" />
+          </SelectTrigger>
+          <SelectContent> 
+            {mutualFunds.map(fund => (
+              <SelectItem 
+                key={fund.ticker} 
+                value={fund.ticker} 
+                className={`
+                  flex items-center justify-between
+                  ${fund.hotness < 3 ? 'bg-red-100 data-[highlighted]:bg-red-200' : ''}
+                `}
+              >
+                <span>{fund.name} ({fund.ticker})</span>
+                {fund.hotness < 3 && <span className="ml-2 text-red-500">🔥 Trending</span>}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
           <div>
             <label htmlFor="initialInvestment" className="block text-sm font-medium text-gray-700">
               Initial Investment ($)
