@@ -68,11 +68,11 @@ export default function MutualFundCalculator() {
                 value={fund.ticker} 
                 className={`
                   flex items-center justify-between
-                  ${fund.hotness < 3 ? 'bg-red-100 data-[highlighted]:bg-red-200' : ''}
+                  ${fund.hotness <= 2 ? 'bg-red-100 data-[highlighted]:bg-red-200' : ''}
                 `}
               >
                 <span>{fund.name} ({fund.ticker})</span>
-                {fund.hotness < 3 && <span className="ml-2 text-red-500">🔥 Trending</span>}
+                {fund.hotness <= 2 && <span className="ml-2 text-red-500">🔥 Trending</span>}
               </SelectItem>
             ))}
           </SelectContent>
