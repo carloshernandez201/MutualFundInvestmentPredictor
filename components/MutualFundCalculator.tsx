@@ -27,11 +27,36 @@ export default function MutualFundCalculator() {
   useEffect(() => {
     fetch('/api/mutual-funds')
       .then(response => response.json())
-      .then(data => setMutualFunds(data));
+      .then(data => {
+        console.log('Fetched mutual funds:', data);
+        // sort mutual funds by hotness in descending order
+        const sortedFunds = data.sort((a: MutualFund, b: MutualFund) => b.hotness - a.hotness);
+        setMutualFunds(sortedFunds);
+      })
+      .catch(error => console.error('Error fetching mutual funds:', error));
   }, []);
 
+  const updateFrequency = async (ticker: string) => {
+    try {
+      await fetch(`/api/mutual-funds/update-frequency`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ticker }),
+      });
+    } catch (error) {
+      console.error('Failed to update frequency:', error);
+    }
+  }
+
   const handleCalculate = async () => {
+    if (!selectedFund) {
+      alert('Please select a mutual fund');
+      return;
+    }
     setIsLoading(true);
+    await updateFrequency(selectedFund);
     const response = await fetch(`/api/calculate?ticker=${selectedFund}&initialInvestment=${initialInvestment}&time=${time}`);
     const data = await response.json();
     setResult(data);
@@ -68,11 +93,11 @@ export default function MutualFundCalculator() {
                 value={fund.ticker} 
                 className={`
                   flex items-center justify-between
-                  ${fund.hotness <= 2 ? 'bg-red-100 data-[highlighted]:bg-red-200' : ''}
+                  ${fund.hotness >= 4 ? 'bg-red-100 data-[highlighted]:bg-red-200' : ''}
                 `}
               >
                 <span>{fund.name} ({fund.ticker})</span>
-                {fund.hotness <= 2 && <span className="ml-2 text-red-500">🔥 Trending</span>}
+                {fund.hotness >= 4 && <span className="ml-2 text-red-500">🔥 Trending</span>}
               </SelectItem>
             ))}
           </SelectContent>
