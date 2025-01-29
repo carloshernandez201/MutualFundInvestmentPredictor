@@ -30,8 +30,27 @@ export default function MutualFundCalculator() {
       .then(data => setMutualFunds(data));
   }, []);
 
+  const updateFrequency = async (ticker: string) => {
+    try {
+      await fetch(`/api/mutual-funds/update-frequency`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ticker }),
+      });
+    } catch (error) {
+      console.error('Failed to update frequency:', error);
+    }
+  }
+
   const handleCalculate = async () => {
+    if (!selectedFund) {
+      alert('Please select a mutual fund');
+      return;
+    }
     setIsLoading(true);
+    await updateFrequency(selectedFund);
     const response = await fetch(`/api/calculate?ticker=${selectedFund}&initialInvestment=${initialInvestment}&time=${time}`);
     const data = await response.json();
     setResult(data);
