@@ -20,7 +20,6 @@ export default function MutualFundCalculator() {
   const [initialInvestment, setInitialInvestment] = useState('');
   const [time, setTime] = useState('');
   const [result, setResult] = useState<{ futureValue: string; annualizedReturn: string } | null>(null);
-  const [chartData, setChartData] = useState<{ year: number; value: number }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -67,7 +66,7 @@ export default function MutualFundCalculator() {
         value: parseFloat(initialInvestment) * Math.exp((parseFloat(data.annualizedReturn) / 100) * i)
       });
     }
-    setChartData(yearlyData);
+    // setChartData(yearlyData);
     setIsLoading(false);
   };
 
