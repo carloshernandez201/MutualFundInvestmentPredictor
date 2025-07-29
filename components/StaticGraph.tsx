@@ -19,7 +19,7 @@ export default function StaticGraph() {
   useEffect(() => {
     const interval = setInterval(() => {
       setData(generateRandomData(12));
-    }, 5000);
+    }, 5001);
 
     return () => clearInterval(interval);
   }, []);

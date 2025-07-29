@@ -98,10 +98,10 @@ def get_available_stocks():
 if __name__ == '__main__':
     print("Starting Stock Predictor API...")
     print("Ready to process LSTM predictions")
-    print("API available at: http://localhost:5000")
+    print("API available at: http://localhost:5001")
     
     app.run(
         host='0.0.0.0',
-        port=5000,
+        port=5001,
         debug=True
     )

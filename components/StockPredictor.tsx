@@ -48,7 +48,7 @@ export default function StockPredictor() {
 
     try {
       // This will call our Python backend (we'll implement this next)
-      const response = await fetch('http://localhost:5000/api/predict', {
+      const response = await fetch('http://localhost:5001/api/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
