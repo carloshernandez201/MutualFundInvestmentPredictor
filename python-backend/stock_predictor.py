@@ -61,6 +61,7 @@ class StockPredictor:
         self.num_layers = num_layers
         self.model = None
         self.scaler = MinMaxScaler()
+        self.target_scaler = MinMaxScaler()
         self.feature_columns = get_feature_columns()
         
     def prepare_data(self, data, target_column='Close'):
@@ -71,16 +72,20 @@ class StockPredictor:
         
         # select features
         features = data[self.feature_columns].values
-        target = data[target_column].values
+        target = data[target_column].values.reshape(-1, 1)  # reshape for scaler
         
         # scale features
         scaled_features = self.scaler.fit_transform(features)
+        
+        # scale target values too
+        self.target_scaler = MinMaxScaler()
+        scaled_target = self.target_scaler.fit_transform(target).flatten()
         
         # create sequences
         X, y = [], []
         for i in range(self.sequence_length, len(scaled_features)):
             X.append(scaled_features[i-self.sequence_length:i])
-            y.append(target[i])
+            y.append(scaled_target[i])  # use scaled target
         
         X = np.array(X)
         y = np.array(y)
@@ -88,7 +93,7 @@ class StockPredictor:
         logger.info(f"Created {len(X)} sequences of length {self.sequence_length}")
         logger.info(f"Feature shape: {X.shape}, Target shape: {y.shape}")
         
-        return X, y, target
+        return X, y, target.flatten()
     
     def train_test_split(self, X, y, test_size=0.2):
         """
@@ -164,7 +169,10 @@ class StockPredictor:
         with torch.no_grad():
             X_tensor = torch.FloatTensor(X)
             predictions = self.model(X_tensor)
-            return predictions.numpy().flatten()
+            scaled_predictions = predictions.numpy().flatten()
+            
+            # keep predictions scaled for metric calculation
+            return scaled_predictions
     
     def calculate_metrics(self, y_true, y_pred):
         """
@@ -174,9 +182,19 @@ class StockPredictor:
         mae = mean_absolute_error(y_true, y_pred)
         rmse = np.sqrt(mse)
         
+        # debug prints
+        print(f"y_true sample: {y_true[:5]}")
+        print(f"y_pred sample: {y_pred[:5]}")
+        print(f"y_true type: {type(y_true)}, shape: {y_true.shape}")
+        print(f"y_pred type: {type(y_pred)}, shape: {y_pred.shape}")
+        
         # calculate accuracy (percentage of predictions within 5% of actual)
         percentage_error = np.abs((y_true - y_pred) / y_true) * 100
+        print(f"percentage_error sample: {percentage_error[:5]}")
+        print(f"percentage_error <= 5: {(percentage_error <= 5)[:5]}")
+        
         accuracy = np.mean(percentage_error <= 5) * 100
+        print(f"Final accuracy: {accuracy}")
         
         return {
             'mse': mse,
