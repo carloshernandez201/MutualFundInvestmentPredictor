@@ -3,7 +3,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+First, run the frontend server:
 
 ```bash
 npm run dev
@@ -18,7 +18,13 @@ bun dev
 Then, run the backend server:
 
 ```bash
-cd backend
+cd python-backend
+python -m venv venv
+# On macOS/Linux:
+source venv/bin/activate
+# On Windows:
+venv\Scripts\activate
+pip install -r requirements.txt
 python app.py
 ```
 
