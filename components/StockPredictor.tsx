@@ -197,7 +197,7 @@ export default function StockPredictor() {
               </div>
               <div className="bg-orange-50 p-4 rounded-lg">
                 <p className="text-sm text-gray-600">Status</p>
-                <p className="text-sm font-semibold text-orange-600">
+                <p className="text-xl font-semibold text-orange-600">
                   {result.status}
                 </p>
               </div>
